@@ -27,6 +27,18 @@ function php_docker_name_random() {
 
 }
 
+function port_checker() {
+    while   :
+    do
+        port=$(shuf -i 10000-40000 -n 1)
+        port_checking=$(netstat -nplt | grep $port)
+        if [ -z "$port_checking" ]; then
+            break
+        fi
+    done
+
+}
+
 function creat_php_fpm_docker_file() {
 
     cat >docker-compser-$db_creat.yaml <<EOF
@@ -37,10 +49,9 @@ services:
     tty: true # Enables debugging capabilities when attached to this container.
     image: docker.io/bitnami/php-fpm:$php_version
     ports:
-      - 9000:9000
+      - $port:9000
     volumes:
       - ./$php_version/$db_creat:/app
-    restart: always
 EOF
 
 }
@@ -50,5 +61,13 @@ function start_docker()
 }
 
 php_docker_name_random
+port_checker
 creat_php_fpm_docker_file
 start_docker
+
+printf "==========================================================================\n"
+printf "                    Install complete php-fpm on docker                    \n"
+printf "==========================================================================\n"
+printf "               Please save infomation php-fpm connect use later           \n"
+printf "                 Port php-fpm:                      $port                 \n"
+printf "==========================================================================\n"
