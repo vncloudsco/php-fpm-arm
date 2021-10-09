@@ -28,12 +28,14 @@ function php_docker_name_random() {
 }
 
 function port_checker() {
-    while   :
-    do
+    while :; do
         port=$(shuf -i 40000-45000 -n 1)
         port_checking=$(netstat -nplt | grep $port)
+        port_checkingv2=$(find ./ -type f -name "*.yaml" -exec grep '$port' {} \;)
         if [ -z "$port_checking" ]; then
-            break
+            if [ -z "$port_checkingv2" ]; then
+                break
+            fi
         fi
     done
 
@@ -43,7 +45,6 @@ function creat_php_fpm_docker_file() {
 
     cat >docker-compser-$db_creat.yaml <<EOF
 version: '2'
-
 services:
   $db_creat:
     tty: true # Enables debugging capabilities when attached to this container.
@@ -55,8 +56,7 @@ services:
 EOF
 
 }
-function start_docker()
-{
+function start_docker() {
     docker_compose -f docker-compser-$db_creat.yaml up -d
 }
 
