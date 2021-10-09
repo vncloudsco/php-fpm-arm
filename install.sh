@@ -30,7 +30,7 @@ function php_docker_name_random() {
 function port_checker() {
     while   :
     do
-        port=$(shuf -i 10000-40000 -n 1)
+        port=$(shuf -i 40000-45000 -n 1)
         port_checking=$(netstat -nplt | grep $port)
         if [ -z "$port_checking" ]; then
             break
